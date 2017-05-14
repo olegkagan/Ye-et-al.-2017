@@ -27,15 +27,36 @@ library(TwoSampleMR)
 library(MRInstruments)
 ```
 
-#Need to download and merge LDscore
-
-Load GWAS summary statistics containing GWAS P-values, rsid, SNP position, MAF, and pre-calculated LDscore for the CEU population
+Load GWAS summary statistics containing rsid, GWAS P-values, SNP position, MAF, and pre-calculated LDscore for the CEU population. LDscore can be downloaded from https://github.com/bulik/ldsc
 ```
 JohnToddgwas_hg19_ldscore<-read.csv("JohnToddgwas_hg19_ldscore.csv",he=T,sep="")
 ```
-Find existing ALSPAC adolescent mQTLs from the 'TwoSampleMR' package, these mQTLs have strong genetic effect on DNA methylation (filtered with Bonferroni threshold p<1e-14)
+Find existing ALSPAC adolescent mQTLs from the 'TwoSampleMR' package
 ```
 data("aries_mqtl")
 cpglist<-subset(aries_mqtl,age=="Adolescence")
 cpglist<-subset(cpglist,!duplicated(SNP))
 ```
+Create another column and split SNPs into ALSPAC mQTLs and null SNPs
+```
+JohnToddgwas_hg19_ldscore$group<-"null"
+JohnToddgwas_hg19_ldscore$group[JohnToddgwas_hg19_ldscore$SNP %in% cpglist$SNP]<-"mQTL"
+```
+We run the enrichment analysis only using mQTLs with strong genetic effects on DNA methylation, we thus set the Bonferroni threshold to P<1e-14 and we name this group of mQTLs "mQTL_test"
+```
+JohnToddgwas_hg19_ldscore$group[JohnToddgwas_hg19_ldscore$SNP %in% cpglist$SNP[which(cpglist$pval<1e-14)]]<-"mQTL_test"
+```
+this gives n=4562 target mQTLs for enrichment analysis
+
+We match null SNPs to mQTLs in two ways. First, we match them via similar SNP features.  
+
+
+
+#Match null SNPs to mQTLs via same gennomic annotations
+
+
+
+
+
+
+
