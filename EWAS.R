@@ -197,18 +197,18 @@ write.table(rntransformedM,file="rntransformedM.txt",row.names=F,col.names=F,sep
 ####################################                     
 #
 # generate a samplesheet which contains gender information,  recode gender as 0 (female) or 1 (male)
-gender<-subset(samplesheet,select=c(Sample_Name,Sex,age))
-gender$Sex[gender$Sex=='F']<-0
-gender$Sex[gender$Sex=='M']<-1
+gender_age<-subset(samplesheet,select=c(Sample_Name,Sex,age))
+gender_age$Sex[gender$Sex=='F']<-0
+gender_age$Sex[gender$Sex=='M']<-1
 #
-rownames(gender)<-gender$Sample_Name                     
-gender$Sample_Name<-NULL                    
+rownames(gender_age)<-gender_age$Sample_Name                     
+gender_age$Sample_Name<-NULL                    
 #convert character into numeric vector
-gender$Sex<-as.numeric(gender$Sex)
+gender_age$Sex<-as.numeric(gender_age$Sex)
 #                     
-# merge cell count and gender             
+# merge cell count with gender and age             
 # 
-covs<-cbind(gender, counts)
+covs<-cbind(gender_age, counts)
 covs<-as.matrix(covs)
 covs<-t(covs)
 covs<-as.data.frame(covs)
