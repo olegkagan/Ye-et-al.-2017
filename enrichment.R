@@ -275,8 +275,78 @@ target <- with(input,
 #searching for annotation
 #
 #
-
-
-
-
-
+#
+#
+loc<-locateVariants(target,TxDb.Hsapiens.UCSC.hg19.knownGene,AllVariants())
+#
+#
+names(loc) <- NULL
+out<-as.data.frame(loc)
+#
+#
+out$names<-names(target)[out$QUERYID]
+out <- out[,c("names", "seqnames", "start", "end", "LOCATION", "GENEID", "PRECEDEID", "FOLLOWID")]
+#
+#
+#this gives 2511193 SNPs with annotations
+#
+#
+#remove replicates
+out<-unique(out)
+#
+#
+# this gives 1260897 SNPs with annotations
+#
+#
+Data1_hg19_ldscore_genomicfeatures<-merge(x=Data1_hg19_ldscore,y=out,by.x='SNP',by.y='names',all.x)
+#
+#
+#
+# this gives 1261642 SNPs,for some SNPs i.e. rs10002433 was located in intron of one gene but located in promoter of another gene, 5699 mQTL_test with p<1e-14 (strong genetic effect on methylation)
+#
+# remove duplicated SNPs
+#
+Data1_hg19_ldscore_genomicfeaturesv2<-subset(Data1_hg19_ldscore_genomicfeatures,!duplicated(SNP))
+#
+# this tives 1160829 total SNPs and mQTL_test 4522
+# 
+#
+##########################################
+#perform fisher's combined test for mQTLs
+##########################################
+#
+fishers_combined_test(Data1_hg19_ldscore_genomicfeaturesv2$p.meta[which(Data1_hg19_ldscore_genomicfeaturesv2$SNPcat=="mQTL_test")])
+#
+#
+#pval is 1.281253e-41
+#
+# choosing null SNPs
+#
+#
+null_snp<-subset(Data1_hg19_ldscore_genomicfeaturesv2,Data1_hg19_ldscore_genomicfeaturesv2$SNPcat=="null")
+#
+p.values<-Data1_hg19_ldscore_genomicfeaturesv2$p.meta[(mQTL_group$LOCATION==null_snp$LOCATION)&(mQTL_group$seqnames==null_snp$seqnames)]
+#
+#define sample size for permutation
+sample.size<-length(mQTL_group$SNP)
+#
+#define permutation function
+#
+mQTL_enrichment<-function(x){
+pval.sample<-sample(p.values,sample.size)
+fishers_combined_test(pval.sample)$pval}
+#permutate 10000 times
+#
+results<-sapply(1:10000,mQTL_enrichment)
+#
+hist(-log10(results),xlim=c(0,60),xlab="-log10(Combined probability)")
+#
+#
+#determining empirical p value
+empirical.pval<-sum(-log10(results)>=-log10(1.281253e-41))/10000
+empirical.pval
+#
+#
+#
+#
+# For Data2, perform the same analysis
