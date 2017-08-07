@@ -277,4 +277,4 @@ meproxy = Matrix_eQTL_engine(
   min.pv.by.genesnp=FALSE,
   noFDRsaveMemory=FALSE)
                      
-# probes with SNP-CpGs where SNPs have MAF > 1% were removed
+# probes with SNP-CpGs where SNPs had MAF > 1% were removed
