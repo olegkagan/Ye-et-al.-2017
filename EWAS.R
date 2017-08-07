@@ -174,10 +174,18 @@ hist(M.value(meth[,10]))
 rntransformedM=apply(M.value(meth),2,FUN=function(y) qnorm(p=(rank (y,na.last='keep')-.5)/length(y)))
 #
 #
+# reformat M values
+#                    
 #
-# save the rank transformed M values
+rntransformedM<-rbind(colnames(rntransformedM),rntransformedM) 
+colnames(rntransformedM)<-NULL
+rntransformedM<-cbind(row.names(rntransformedM),rntransformedM)										 
+row.names(rntransformedM)<-NULL                     
+# save the rank transformed M values                    
 save(rntransformedM,file="rntransformedM.Robj")
-                     
+#
+# write a text file for rank transformed M values
+write.table(rntransformedM,file="rntransformedM.txt",row.names=F,col.names=F,sep="\t",quote=FALSE)										 
 
 
 
