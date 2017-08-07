@@ -118,3 +118,43 @@ samplesheet<-samplesheet[idx,]
 #
 meth<-norm.beta.random[,idx]
 #
+counts<-counts[idx,]
+#
+geno<-geno[common.ids,]
+#
+#after matching, there are n=907 individuals with their genotype available 
+save(geno,file="genotype.Robj")
+#
+#
+#
+#
+#
+#
+################################################
+# prepare genotype data for MatrixEQTL
+################################################
+# convert 'geno' from data frame into matrix in order to transform the matrix, then convert it back to data frame
+#
+geno1<-as.matrix(geno)
+geno1<-t(geno1)
+geno1<-as.data.frame(geno1)
+#
+geno1<-cbind(row.names(geno1),geno1)
+row.names(geno1)<-NULL
+#
+#
+geno1<-rbind(colnames(geno1),geno1)
+colnames(geno1)<-NULL
+#
+#
+save(geno1,file="genotype.Robj")
+# write it into a text file for matrixEQTL
+write.table(geno1,file="genotype.txt",row.names=F,col.names=F,sep=”\t”,quote=FALSE )
+#
+#
+#
+#
+
+
+
+
