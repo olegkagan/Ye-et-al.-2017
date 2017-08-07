@@ -1,4 +1,4 @@
-# SNP  ~ CpG association analysis (EWAS)
+# SNP  ~ CpG association analysis (EWAS) for T1D GWAS variants and ALSPAC DNA methylation 450k array data
 #
 # BlueCystal cluster: linux
 # 
@@ -97,4 +97,6 @@ rownames(geno)<-geno$FID
 #
 geno<-geno[,grep("^rs", colnames(geno))]
 #
+# load samplesheet for 450k 
+load("samplesheet.Robj",verbose=TRUE)
 
