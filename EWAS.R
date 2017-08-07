@@ -1,6 +1,6 @@
 # SNP  ~ CpG association analysis (EWAS) for T1D GWAS variants and ALSPAC DNA methylation 450k array data
 #
-# BlueCystal cluster: linux
+# BlueCystal cluster: Linux
 # 
 # 
 module add languages/R-3.2.2-ATLAS
@@ -154,7 +154,30 @@ write.table(geno1,file="genotype.txt",row.names=F,col.names=F,sep=”\t”,quote
 #
 #
 #
-
+#################################################
+# prepare 450k methylation data for MatrixEQTL
+#################################################
+# 
+# transform beta values to M values
+#
+# first check the distribution of beta values
+hist(meth[,10])
+#
+# define a function to transform beta values to M values
+M.value<-function(x){log2(x/(1-x))}
+#plot a histogram of a transformed M values 
+hist(M.value(meth[,10]))
+#
+#
+# to remove outliers, rank transform M values from bimodal distribution to normal distribution
+#
+rntransformedM=apply(M.value(meth),2,FUN=function(y) qnorm(p=(rank (y,na.last='keep')-.5)/length(y)))
+#
+#
+#
+# save the rank transformed M values
+save(rntransformedM,file="rntransformedM.Robj")
+                     
 
 
 
