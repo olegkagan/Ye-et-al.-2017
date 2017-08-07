@@ -1,6 +1,6 @@
 
 ```
-Requires R.3.3.3
+Requires R version 3.3.3
 
 Contains R code for two statistical analyses
 
