@@ -194,14 +194,40 @@ write.table(rntransformedM,file="rntransformedM.txt",row.names=F,col.names=F,sep
 ####################################                     
 #
 # generate a samplesheet which contains gender information,  recode gender as 0 (female) or 1 (male)
-samplesheet1<-subset(samplesheet,select=c(Sample_Name,Sex,age))
-samplesheet1$Sex[samplesheet1$Sex=='F']<-0
-samplesheet1$Sex[samplesheet1$Sex=='M']<-1
+gender<-subset(samplesheet,select=c(Sample_Name,Sex,age))
+gender$Sex[gender$Sex=='F']<-0
+gender$Sex[gender$Sex=='M']<-1
 #
-rownames(samplesheet1)<-samplesheet1$Sample_Name                     
-samplesheet1$Sample_Name<-NULL
-#                     
+rownames(gender)<-gender$Sample_Name                     
+gender$Sample_Name<-NULL                    
 #convert character into numeric vector
-samplesheet1$Sex<-as.numeric(samplesheet1$Sex)
+gender$Sex<-as.numeric(gender$Sex)
+#                     
+# merge cell count and gender             
+# 
+covs<-cbind(gender, counts)
+covs<-as.matrix(covs)
+covs<-t(covs)
+covs<-as.data.frame(covs)
+covs<-rbind(colnames(covs),covs)
+colnames(covs)<-NULL
+covs<-cbind(row.names(covs),covs)
+row.names(covs)<-NULL
+#
+#                     
+# write the merged file as a text file and save it
+write.table(covs,file="covariables.txt",row.names=F,col.names=F,sep="\t",quote=F)      
+#
+#######################################
+# run EWAS using MatrixEQTL
+#######################################
+#
+# request a job queue on the cluster
+# 
+qsub -I -l walltime=2:0:00 -l nodes=1:ppn=2
+#
+                     
+                     
+                     
                      
                      
