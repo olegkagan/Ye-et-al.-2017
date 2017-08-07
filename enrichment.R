@@ -230,5 +230,5 @@ cpglist<-subset(cpglist,!duplicated(SNP))
 #
 #
 
-
+sd
 
