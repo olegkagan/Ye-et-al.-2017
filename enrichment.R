@@ -61,6 +61,9 @@ Data1_hg19<-merge(x=merge,y=gwasdata,by.x='SNP',by.y='rsid')
 
 Data1_hg19_ldscore<-subset(Data1_hg19,select=c("SNP","CHR","BP","CM","MAF","L2","p.meta"))
 
+write.table(Data1_hg19_ldscore,"Data1_hg19_ldscore.csv",sep='\t')
+
+
 
 ##############################################################################
 # retrieve mQTL from adolescent and perform Fisher's combined probability test
@@ -190,6 +193,43 @@ empirical.pval
 
 
 
+###########################################
+#matching null SNPs via genomic annotation
+###########################################
+
+#required packages
+
+source("https://bioconductor.org/biocLite.R")
+biocLite("VariantAnnotation")
+biocLite("GenomicFeatures")
+biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene")
+biocLite("org.Hs.eg.db")
+library(devtools)
+install_github("MRCIEU/TwoSampleMR")
+install.packages("qqman")
+library(org.Hs.eg.db)
+
+library(VariantAnnotation)
+library(GenomicFeatures)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(TwoSampleMR)
+library(MRInstruments)
+
+#open GWAS Data1 file with merged LD score
+
+Data1_hg19_ldscore<-read.csv("Data1_hg19_ldscore.csv",he=T,sep="")
+
+data("aries_mqtl")
+cpglist<-subset(aries_mqtl,age=="Adolescence")
+cpglist<-subset(cpglist,!duplicated(SNP))
+#
+#
+# cpglist contained 30087 mQTLs available
+#
+#
+#
+#
+#
 
 
 
