@@ -97,7 +97,7 @@ combined.p.for.mQTL<-fishers_combined_test(available_mQTL_test$p.meta)
 #
 #
 #######################################
-#matching null SNPs via SNP properties
+# matching null SNPs via SNP properties
 #######################################
 #
 # null SNPs must be further than 1000kb away from the mQTL
@@ -108,74 +108,75 @@ combined.p.for.mQTL<-fishers_combined_test(available_mQTL_test$p.meta)
 #
 Data1_hg19_ldscore$SNPcat<-'null'
 #
-#define mQTLs with weak effect and mQTLs with strong effect on CpGs
+# define mQTLs with weak effect and mQTLs with strong effect on CpGs
 #
 #
 #
-#weak effect 
+# weak effect 
 Data1_hg19_ldscore$SNPcat[Data1_hg19_ldscore$SNP %in% available_mQTL$SNP]<-'mQTL'
 #
-#strong effect
+# strong effect
 Data1_hg19_ldscore$SNPcat[Data1_hg19_ldscore$SNP %in% available_mQTL_test$SNP]<-'mQTL_test'
 #
 #
 #
 #
-#find maximum LDscore
+# find maximum LDscore
 max(Data1_hg19_ldscore$L2)
-#305.1991
+# 305.1991
 #
 #
 min(Data1_hg19_ldscore$L2)
-#-0.2644381
+# -0.2644381
 #
-#find percentiles of LDscore
+# find percentiles of LDscore
 duration=Data1_hg19_ldscore$L2
 quantile(duration,c(.10,.20,.30,.40,.50,.60,.70,.80,.90))
 #
 #
 #
-#10%       20%       30%       40%       50%       60%       70%       80%       90% 
-#7.012412  9.967493 12.704047 15.535856 18.644254 22.269589 26.798721 33.192342 44.460718
+# 10%       20%       30%       40%       50%       60%       70%       80%       90% 
+# 7.012412  9.967493 12.704047 15.535856 18.644254 22.269589 26.798721 33.192342 44.460718
 #
 #
 #
-#create 10 LDscore bins according to percentiles
+# create 10 LDscore bins according to percentiles
 Data1_hg19_ldscore$L2bin<-cut(Data1_hg19_ldscore$L2,
                               breaks=c(0,7.012412,9.967493,12.704047,15.535856,18.644254,22.269589,26.798721,33.192342,44.460718,305.1991),
                               labels=c("group1","group2","group3","group4","group5","group6","group7","group8","group9","group10"))
-
 #
 #
-#define mQTL and null SNPs
+#
+# define mQTL and null SNPs
 mQTL<-subset(Data1_hg19_ldscore,Data1_hg19_ldscore$SNPcat=='mQTL_test')
 #
 null<-subset(Data1_hg19_ldscore,Data1_hg19_ldscore$SNPcat=='null')
 #
 #
 #
-#define location of null SNPs
+# define location of null SNPs
 #
 #
 location<-(null$CHR==mQTL$CHR) & (null$BP-mQTL$BP>1000000) | (mQTL$BP-null$BP>1000000)
 #
-#define MAF range
+# define MAF range
 #
 mafrange<-(null$MAF-mQTL$MAF<0.02) | (mQTL$MAF-null$MAF<0.02)
 #
-#define LDscore
+# define LDscore bin
 ldscore<-null$L2bin == mQTL$L2bin
 #
 #
-#select null SNPs
+# define p values
 #
 p.values<-Data1_hg19_ldscore$p.meta[location&mafrange&ldscore]
 #
 #
+# define sample size
 sample.size<-length(mQTL$SNP)
 #
 #
-#define permuation function
+# define permuation function
 #
 set.seed(200)
 mQTL_enrichment<-function(x){
@@ -217,10 +218,11 @@ library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(TwoSampleMR)
 library(MRInstruments)
 #
-#open GWAS Data1 file with merged LD score
+# open GWAS Data1 file with LD score
 #
 Data1_hg19_ldscore<-read.csv("Data1_hg19_ldscore.csv",he=T,sep="")
 #
+# retrieve Aries mQTLs
 data("aries_mqtl")
 cpglist<-subset(aries_mqtl,age=="Adolescence")
 cpglist<-subset(cpglist,!duplicated(SNP))
@@ -234,11 +236,11 @@ cpglist<-subset(cpglist,!duplicated(SNP))
 # null SNPs
 Data1_hg19_ldscore$group<-"null"
 
-# weak effect on CpGs 
+# mQTLS with weak effect on CpGs 
 Data1_hg19_ldscore$group[Data1_hg19_ldscore$SNP %in% cpglist$SNP]<-"mQTL"
 #
 #
-# strong effect on CpGs
+# mQTLs with strong effect on CpGs
 Data1_hg19_ldscore$group[Data1_hg19_ldscore$SNP %in% cpglist$SNP[which(cpglist$pval<1e-14)]]<-"mQTL_test"
 #
 #
@@ -272,7 +274,7 @@ target <- with(input,
 #
 #
 #
-#searching for annotation
+#search for annotation
 #
 #
 #
@@ -291,7 +293,7 @@ out <- out[,c("names", "seqnames", "start", "end", "LOCATION", "GENEID", "PRECED
 #this gives 2511193 SNPs with annotations
 #
 #
-#remove replicates
+#remove duplicates
 out<-unique(out)
 #
 #
@@ -302,13 +304,13 @@ Data1_hg19_ldscore_genomicfeatures<-merge(x=Data1_hg19_ldscore,y=out,by.x='SNP',
 #
 #
 #
-# this gives 1261642 SNPs,for some SNPs i.e. rs10002433 was located in intron of one gene but located in promoter of another gene, 5699 mQTL_test with p<1e-14 (strong genetic effect on methylation)
+# this gives 1261642 SNPs,for some SNPs i.e. rs10002433 was located in intron of one gene but promoter of another gene, 5699 mQTL_test with p<1e-14
 #
 # remove duplicated SNPs
 #
 Data1_hg19_ldscore_genomicfeaturesv2<-subset(Data1_hg19_ldscore_genomicfeatures,!duplicated(SNP))
 #
-# this tives 1160829 total SNPs and mQTL_test 4522
+# this tives 1160829 total SNPs and 4522 mQTL_test 
 # 
 #
 ##########################################
@@ -320,11 +322,9 @@ fishers_combined_test(Data1_hg19_ldscore_genomicfeaturesv2$p.meta[which(Data1_hg
 #
 #pval is 1.281253e-41
 #
-# choosing null SNPs
-#
+# choosing null SNPs and their p values
 #
 null_snp<-subset(Data1_hg19_ldscore_genomicfeaturesv2,Data1_hg19_ldscore_genomicfeaturesv2$SNPcat=="null")
-#
 p.values<-Data1_hg19_ldscore_genomicfeaturesv2$p.meta[(mQTL_group$LOCATION==null_snp$LOCATION)&(mQTL_group$seqnames==null_snp$seqnames)]
 #
 #define sample size for permutation
