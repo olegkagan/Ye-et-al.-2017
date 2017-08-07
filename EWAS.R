@@ -9,7 +9,7 @@ R
 #
 # library(MatrixEQTL)
 #
-# create a txt file containing T1D GWAS variants to test
+# create a txt file containing 67 T1D GWAS variants to test, these SNPs have been previously clumped to make sure they are not in LD (r2 <0.1) 
 #
 cat > t1d_snp_proxy.txt
 rs2476601
@@ -77,4 +77,24 @@ rs78037997
 rs12068671
 rs10801121
 rs118000057
+#
+# use plink to extract individual level genotype data from ASPAC population
+plink --bfile /projects/ALSPAC/studies/originals/alspac/genetic/variants/arrays/gwas/imputed/1000genomes/released/2015-10-30/data/derived/filtered/bestguess/maf0.01_info0.8/combined/data \
+--extract t1d_snpslist_proxy.txt \
+--recode A \
+--out t1d_snps 
+#
+#
+# plink returned 65 SNPs found, rs9268645 and rs1052553 were not found in the ALSPAC data
+# load the returned genotype file into R
+#
+geno<-read.table("t1d_snps.raw", sep="", header=T)
+#
+str(geno) # returns 17825 individuals’ genotype on the 65 SNPs
+#
+# re-format genotype file
+rownames(geno)<-geno$FID
+#
+geno<-geno[,grep("^rs", colnames(geno))]
+#
 
