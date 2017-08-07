@@ -186,6 +186,19 @@ save(rntransformedM,file="rntransformedM.Robj")
 #
 # write a text file for rank transformed M values
 write.table(rntransformedM,file="rntransformedM.txt",row.names=F,col.names=F,sep="\t",quote=FALSE)										 
-
-
-
+#
+#
+#
+####################################
+# prepare samplesheet and covariates                     
+####################################                     
+#
+# recode gender as 0 (female) or 1 (male)
+samplesheet1<-subset(samplesheet,select=c(Sample_Name,Sex,age))
+samplesheet1$Sex[samplesheet1$Sex=='F']<-0
+samplesheet1$Sex[samplesheet1$Sex=='M']<-1
+                     
+                     
+                     
+                     
+                     
