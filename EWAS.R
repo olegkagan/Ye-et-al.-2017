@@ -97,6 +97,24 @@ rownames(geno)<-geno$FID
 #
 geno<-geno[,grep("^rs", colnames(geno))]
 #
-# load samplesheet for 450k 
+# load samplesheet for ALSPAC 450k methylation data
 load("samplesheet.Robj",verbose=TRUE)
-
+#
+#
+# load ALSPAC 450k DNA methylation array data 
+#
+load(“meth.Robj”,verbose=T)
+#
+# load estimated cell counts for 450k array data
+# 
+counts<-read.table("cell-counts.txt",row.names=1,header=T,sep="\t")
+#
+# 
+# subset samplesheet, methylation data and cell counts to participants aged 15 years and older
+#
+idx<-which(samplesheet$time_point=="15up")
+#
+samplesheet<-samplesheet[idx,]
+#
+meth<-norm.beta.random[,idx]
+#
