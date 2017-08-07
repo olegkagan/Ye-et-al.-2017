@@ -227,10 +227,53 @@ write.table(covs,file="covariables.txt",row.names=F,col.names=F,sep="\t",quote=F
 qsub -I -l walltime=2:0:00 -l nodes=1:ppn=2
 #
 #                     
-# define model and p value threshold for multiple testing
+# define liner model and p value threshold for multiple testing
 useModel=modelLINEAR                     
 output_file_name=tempfile()                     
 pvOutputThreshold=1.59e-9                     
 errorCovariance=numeric()                     
 #
 #                     
+# load genotype data
+snps=SlicedData$new()
+snps$fileDelimiter="\t"
+snps$fileOmitCharacters="NA" 
+snps$fileSkipRows=1   
+snps$fileSkipColumns=1
+snps$fileSliceSize=2000
+snps$LoadFile("/panfs/panasas01/socs/yy5245/genotype_proxySNPs.txt")
+#
+#
+# load covariates
+cvrt=SlicedData$new()  
+cvrt$fileDelimiter="\t"
+cvrt$fileOmitCharacters="NA"
+cvrt$fileSkipRows=1                     
+cvrt$fileSkipColumns=1  
+if(length("/panfs/panasas01/socs/yy5245/covariables without PCA.txt")>0){cvrt$LoadFile("/panfs/panasas01/socs/yy5245/covariables without PCA.txt")} 
+#
+#
+# load genotype data
+gene=SlicedData$new()
+gene$fileDelimiter="\t"                     
+gene$fileOmitCharacters="NA"
+gene$fileSkipRows=1                     
+gene$fileSkipColumns=1                     
+gene$fileSliceSize=2000                     
+gene$LoadFile("/panfs/panasas01/socs/yy5245/rntransformedM.txt")                     
+#
+#
+# run EWAS
+meproxy = Matrix_eQTL_engine(
+  snps=snps,
+  gene=gene,
+  cvrt=cvrt,
+  output_file_name=output_file_name,
+  pvOutputThreshold=pvOutputThreshold,
+  useModel=useModel,
+  errorCovariance=errorCovariance,
+  verbose=TRUE,
+  pvalue.hist=TRUE,
+  min.pv.by.genesnp=FALSE,
+  noFDRsaveMemory=FALSE)
+                     
