@@ -39,7 +39,7 @@ T1D_mQTL_expo<-read_exposure_data(filename="T1D_mQTL_expo.txt", sep=",",
 # perform LD clumping 
 # T1D_mQTL_expo_clump<-clump_data(T1D_mQTL_expo)
 # 
-# ##########################
+############################
 # load outcome data (Data1)
 ############################
 #
