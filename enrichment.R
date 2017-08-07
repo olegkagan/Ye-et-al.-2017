@@ -229,6 +229,54 @@ cpglist<-subset(cpglist,!duplicated(SNP))
 # cpglist contained 30087 mQTLs available
 #
 #
+# define null SNPs and mQTLs 
+#
+# null SNPs
+Data1_hg19_ldscore$group<-"null"
 
-sd
+# weak effect on CpGs 
+Data1_hg19_ldscore$group[Data1_hg19_ldscore$SNP %in% cpglist$SNP]<-"mQTL"
+#
+#
+# strong effect on CpGs
+Data1_hg19_ldscore$group[Data1_hg19_ldscore$SNP %in% cpglist$SNP[which(cpglist$pval<1e-14)]]<-"mQTL_test"
+#
+#
+#
+#
+#this gives 4562 mQTL_test
+#
+#
+#
+# edit the header
+input<-JohnToddgwas_hg19_ldscore[,c("SNP","CHR","BP")]
+colnames(input)<-c("rsid","chr","pos")
+#
+#
+#
+#convert 'input' to GRange object
+#
+input$pos<-as.numeric(as.character(input$pos))
+#
+input$chr<-as.character(input$chr)
+input$chr<-sub("^","chr",input$chr)
+input$chr<-as.factor(input$chr)
+head(input)
+input$chr<-as.factor(input$chr)
+#
+#
+target <- with(input,
+               GRanges( seqnames = Rle(chr),
+                        ranges   = IRanges(pos, end=pos, names=rsid),
+                        strand   = Rle(strand("*")) ) )
+#
+#
+#
+#searching for annotation
+#
+#
+
+
+
+
 
