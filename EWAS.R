@@ -193,12 +193,15 @@ write.table(rntransformedM,file="rntransformedM.txt",row.names=F,col.names=F,sep
 # prepare samplesheet and covariates                     
 ####################################                     
 #
-# recode gender as 0 (female) or 1 (male)
+# generate a samplesheet which contains gender information,  recode gender as 0 (female) or 1 (male)
 samplesheet1<-subset(samplesheet,select=c(Sample_Name,Sex,age))
 samplesheet1$Sex[samplesheet1$Sex=='F']<-0
 samplesheet1$Sex[samplesheet1$Sex=='M']<-1
-                     
-                     
-                     
+#
+rownames(samplesheet1)<-samplesheet1$Sample_Name                     
+samplesheet1$Sample_Name<-NULL
+#                     
+#convert character into numeric vector
+samplesheet1$Sex<-as.numeric(samplesheet1$Sex)
                      
                      
