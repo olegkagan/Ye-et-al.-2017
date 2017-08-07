@@ -2,7 +2,7 @@
 ```
 Requires R.3.3.3
 
-Contains R code for two analyses
+Contains R code for two statistical analyses
 
 
 1. mQTL-enrichment analysis
