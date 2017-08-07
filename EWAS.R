@@ -190,7 +190,7 @@ write.table(rntransformedM,file="rntransformedM.txt",row.names=F,col.names=F,sep
 #
 #
 ####################################
-# prepare samplesheet and covariates                     
+# prepare samplesheet for covariates                     
 ####################################                     
 #
 # generate a samplesheet which contains gender information,  recode gender as 0 (female) or 1 (male)
@@ -226,8 +226,11 @@ write.table(covs,file="covariables.txt",row.names=F,col.names=F,sep="\t",quote=F
 # 
 qsub -I -l walltime=2:0:00 -l nodes=1:ppn=2
 #
-                     
-                     
-                     
-                     
-                     
+#                     
+# define model and p value threshold for multiple testing
+useModel=modelLINEAR                     
+output_file_name=tempfile()                     
+pvOutputThreshold=1.59e-9                     
+errorCovariance=numeric()                     
+#
+#                     
