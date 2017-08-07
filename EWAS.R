@@ -1,5 +1,8 @@
 # SNP  ~ CpG association analysis (EWAS) for T1D GWAS variants and ALSPAC DNA methylation 450k array data
 #
+# Mixed effect linear regression model
+meth[i,] ~ geno[,j] + samplesheet$Sex + samplesheet$age + counts
+#
 # BlueCystal cluster: Linux
 # 
 # 
