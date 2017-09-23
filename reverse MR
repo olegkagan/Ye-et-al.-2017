@@ -1,0 +1,88 @@
+SNP_CPG_asso<-read.csv("43SNPs_and_280CpGs_asso_outcome.csv", stringsAsFactors = F)
+
+EWAS<-read.csv("mQTLproxy_SNP CpG manually filtered final 281_exposure.csv", stringsAsFactors = F)
+EWAS1<-EWAS[,c("snps", "effect_allele_exposure", "other_allele_exposure", "eat_exposure")]
+
+SNP_CPG_asso<-merge(SNP_CPG_asso, 
+                     EWAS1, 
+                     by.x = "snps",
+                     by.y= "snps", all=F)
+SNP_CPG_asso<-SNP_CPG_asso[!duplicated(SNP_CPG_asso$statistic),]
+
+
+write.table(SNP_CPG_asso, "outcome.txt", row.names=F, sep=",")
+
+
+library(TwoSampleMR)
+
+# test reverse MR   SNPs -> T1D -> meth
+# read exposure
+# exposure is the association between SNPs and T1D 
+
+# first generate a txt file
+
+write.table(EWAS, "exposure.txt", row.names = F, sep=",")
+
+exposure<-read_exposure_data(
+  filename = "exposure.txt",
+  sep=",",
+  snp_col = "SNP",
+  beta_col = "beta.meta",
+  se_col = "beta_se",
+  effect_allele_col = "a1",
+  other_allele_col = "a0",
+  eaf_col = "eaf_outcome",
+  pval_col = "p.meta"
+)
+
+#4: In format_data(as.data.frame(exposure_dat), type = "exposure", snps = NULL,  :
+#The following SNP(s) are missing required information for the MR tests and will be excluded
+#rs478222
+#rs924043
+#rs689
+#rs2664170
+
+exposure<-subset(exposure, mr_keep.exposure=='TRUE')
+
+# clumping
+exposure_clump<-clump_data(exposure)
+
+
+#Clumping 4uYlfW, 43 SNPs
+#Removing the following SNPs due to LD with other SNPs:
+#rs10795791
+#rs12908309
+#rs193778
+
+# load outcome data
+
+outcome_dat<-read_outcome_data(
+  snps = exposure_clump$SNP,
+  filename = "outcome.txt",
+  sep=",",
+  snp_col = "SNPs",
+  beta_col = "beta",
+  se_col = "beta_se",
+  effect_allele_col = "effect_allele_exposure",
+  other_allele_col = "other_allele_exposure",
+  eaf_col = "eat_exposure",
+  pval_col =  "pvalue ",
+  phenotype_col  = "gene"
+)
+
+
+# harmonise data
+
+dat<-harmonise_data( 
+  exposure_dat =  exposure,
+  outcome_dat = outcome_dat
+  )
+
+#Removing the following SNPs due to harmonising issues:
+#rs1538171
+
+
+#final number of SNPs in MR is 39
+result<-mr(dat)
+
+write.csv(result, "reverse MR result.csv")
