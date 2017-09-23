@@ -21,6 +21,7 @@ R code tests whether T1D GWAS variants significantly regulate DNA methylation
 
 R code tests for the mediation effect of DNA methylation on Type 1 diabetes
 
+
 4. Reverse MR
 
 Tests for the mediation effect of T1D on DNA methylation
